@@ -1,6 +1,5 @@
 const express = require('express');
 const usermodel = require('../model/user.model');
-const { default: mongoose } = require('mongoose');
 var jwt = require('jsonwebtoken');
 
 const router = express.Router();
@@ -12,8 +11,8 @@ router.post('/register', async (req, res) => {
     const user = await usermodel.create({
         username, password
     })
-
-    var token = jwt.sign({ id: user._id }, process.env.JWT_Sceret);
+    try {
+        var token = jwt.sign({ id: user._id }, process.env.JWT_Sceret);
 
     res.cookie('auth-token', token)
 
@@ -22,6 +21,12 @@ router.post('/register', async (req, res) => {
         user,
         token
     });
+        
+    } catch (error) {
+        console.log(error)
+    }
+
+    
 });
 
 router.post('/login', async (req, res) => {
